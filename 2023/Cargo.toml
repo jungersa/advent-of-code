@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 
-members = ["day-*", "www"]
+members = ["day-*"]
 
 [workspace.dependencies]
 glam = "0.24.2"
@@ -20,6 +20,10 @@ tracy-client-sys = "0.22.0"
 miette = { version = "5.10", features = ["fancy"] }
 thiserror = "1.0.50"
 dhat = "0.3.2"
+
+# [profile.release]
+# codegen-units = 1
+# lto = "fat"
 
 [profile.flamegraph]
 inherits = "release"

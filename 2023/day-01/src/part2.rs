@@ -8,100 +8,118 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
     Ok(output.to_string())
 }
 
+/// Processes a line of text and extracts the first and last digits.
+///
+/// The function looks for specific prefixes ("one", "two", ..., "nine", '1', ..., '9') and suffixes
+/// ("one", "two", ..., "nine", '1', ..., '9') in the given line to determine the first and last digits.
+///
+/// # Arguments
+///
+/// * `line` - A string slice representing the input line.
+///
+/// # Returns
+///
+/// A 32-bit unsigned integer representing the extracted digits. If the extracted digits
+/// cannot be parsed as a valid number, the function will panic.
+///
+/// # Panics
+///
+/// The function panics if the extracted digits cannot be parsed as a valid number.
+///
 fn process_line(line: &str) -> u32 {
-    // let first_digit = line
-    //     .char_indices()
-    //     .find_map(|(i, character)| match character.is_digit(10) {
-    //         true => Some(character),
-    //         false => match &line[i..] {
-    //             s if s.starts_with("one") => Some('1'),
-    //             s if s.starts_with("two") => Some('2'),
-    //             s if s.starts_with("three") => Some('3'),
-    //             s if s.starts_with("four") => Some('4'),
-    //             s if s.starts_with("five") => Some('5'),
-    //             s if s.starts_with("six") => Some('6'),
-    //             s if s.starts_with("seven") => Some('7'),
-    //             s if s.starts_with("eight") => Some('8'),
-    //             s if s.starts_with("nine") => Some('9'),
-    //             _ => None,
-    //         },
-    //     })
-    //     .expect("There should be a number");
+    let first_digit = line
+        .char_indices()
+        .find_map(|(i, character)| match character.is_digit(10) {
+            true => Some(character),
+            false => match &line[i..] {
+                s if s.starts_with("one") => Some('1'),
+                s if s.starts_with("two") => Some('2'),
+                s if s.starts_with("three") => Some('3'),
+                s if s.starts_with("four") => Some('4'),
+                s if s.starts_with("five") => Some('5'),
+                s if s.starts_with("six") => Some('6'),
+                s if s.starts_with("seven") => Some('7'),
+                s if s.starts_with("eight") => Some('8'),
+                s if s.starts_with("nine") => Some('9'),
+                _ => None,
+            },
+        })
+        .expect("There should be a number");
 
-    // let last_digit = line
-    //     .char_indices()
-    //     .rev()
-    //     .find_map(|(i, character)| match character.is_digit(10) {
-    //         true => Some(character),
-    //         false => match &line[..i + 1] {
-    //             s if s.ends_with("one") => Some('1'),
-    //             s if s.ends_with("two") => Some('2'),
-    //             s if s.ends_with("three") => Some('3'),
-    //             s if s.ends_with("four") => Some('4'),
-    //             s if s.ends_with("five") => Some('5'),
-    //             s if s.ends_with("six") => Some('6'),
-    //             s if s.ends_with("seven") => Some('7'),
-    //             s if s.ends_with("eight") => Some('8'),
-    //             s if s.ends_with("nine") => Some('9'),
-    //             _ => None,
-    //         },
-    //     })
-    //     .expect("There should be a number");
+    let last_digit = line
+        .char_indices()
+        .rev()
+        .find_map(|(i, character)| match character.is_digit(10) {
+            true => Some(character),
+            false => match &line[..i + 1] {
+                s if s.ends_with("one") => Some('1'),
+                s if s.ends_with("two") => Some('2'),
+                s if s.ends_with("three") => Some('3'),
+                s if s.ends_with("four") => Some('4'),
+                s if s.ends_with("five") => Some('5'),
+                s if s.ends_with("six") => Some('6'),
+                s if s.ends_with("seven") => Some('7'),
+                s if s.ends_with("eight") => Some('8'),
+                s if s.ends_with("nine") => Some('9'),
+                _ => None,
+            },
+        })
+        .expect("There should be a number");
 
     // Version 2
-    let mut first_digit = 0;
+    // let mut first_digit = 0;
 
-    for i in 0..line.len() {
-        let f_line = &line[i..];
+    // for i in 0..line.len() {
+    //     let f_line = &line[i..];
 
-        let res_first = match f_line {
-            s if s.starts_with("one") => '1',
-            s if s.starts_with("two") => '2',
-            s if s.starts_with("three") => '3',
-            s if s.starts_with("four") => '4',
-            s if s.starts_with("five") => '5',
-            s if s.starts_with("six") => '6',
-            s if s.starts_with("seven") => '7',
-            s if s.starts_with("eight") => '8',
-            s if s.starts_with("nine") => '9',
-            _ => f_line.chars().next().unwrap(),
-        };
+    //     let res_first = match f_line {
+    //         s if s.starts_with("one") => '1',
+    //         s if s.starts_with("two") => '2',
+    //         s if s.starts_with("three") => '3',
+    //         s if s.starts_with("four") => '4',
+    //         s if s.starts_with("five") => '5',
+    //         s if s.starts_with("six") => '6',
+    //         s if s.starts_with("seven") => '7',
+    //         s if s.starts_with("eight") => '8',
+    //         s if s.starts_with("nine") => '9',
+    //         _ => f_line.chars().next().unwrap(),
+    //     };
 
-        match res_first.to_digit(10) {
-            Some(digit) => {
-                first_digit = digit;
-                break;
-            }
-            None => (),
-        }
-    }
+    //     match res_first.to_digit(10) {
+    //         Some(digit) => {
+    //             first_digit = digit;
+    //             break;
+    //         }
+    //         None => (),
+    //     }
+    // }
 
-    let mut last_digit = 0;
+    // let mut last_digit = 0;
 
-    for i in (0..line.len() + 1).rev() {
-        let b_line = &line[..i];
+    // for i in (0..line.len() + 1).rev() {
+    //     let b_line = &line[..i];
 
-        let res_last = match b_line {
-            s if s.ends_with("one") => '1',
-            s if s.ends_with("two") => '2',
-            s if s.ends_with("three") => '3',
-            s if s.ends_with("four") => '4',
-            s if s.ends_with("five") => '5',
-            s if s.ends_with("six") => '6',
-            s if s.ends_with("seven") => '7',
-            s if s.ends_with("eight") => '8',
-            s if s.ends_with("nine") => '9',
-            _ => b_line.chars().last().unwrap(),
-        };
+    //     let res_last = match b_line {
+    //         s if s.ends_with("one") => '1',
+    //         s if s.ends_with("two") => '2',
+    //         s if s.ends_with("three") => '3',
+    //         s if s.ends_with("four") => '4',
+    //         s if s.ends_with("five") => '5',
+    //         s if s.ends_with("six") => '6',
+    //         s if s.ends_with("seven") => '7',
+    //         s if s.ends_with("eight") => '8',
+    //         s if s.ends_with("nine") => '9',
+    //         _ => b_line.chars().last().unwrap(),
+    //     };
 
-        match res_last.to_digit(10) {
-            Some(digit) => {
-                last_digit = digit;
-                break;
-            }
-            None => (),
-        };
-    }
+    //     match res_last.to_digit(10) {
+    //         Some(digit) => {
+    //             last_digit = digit;
+    //             break;
+    //         }
+    //         None => (),
+    //     };
+    // }
 
     // Version 1
     // let mut it = (0..line.len()).filter_map(|i| {
@@ -126,7 +144,7 @@ fn process_line(line: &str) -> u32 {
     // let last_digit = it.last().unwrap_or(first_digit);
 
     format!("{}{}", first_digit, last_digit)
-        .parse::<u32>()
+        .parse()
         .expect("should be a valid number")
 }
 
