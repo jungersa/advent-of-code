@@ -16,8 +16,7 @@ pub fn process(input: &str) -> miette::Result<String, AocError> {
                 None
             }
         })
-        .sum::<usize>()
-        .to_string();
+        .sum::<usize>();
     Ok(output.to_string())
 }
 
