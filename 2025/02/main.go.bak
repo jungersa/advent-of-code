@@ -1,0 +1,78 @@
+package main
+
+import (
+	"bufio"
+	"bytes"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+func main() {
+	file, err := os.Open("input.txt")
+	if err != nil {
+		fmt.Printf("Error opening input file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	result := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		ids := strings.Split(line, ",")
+		for id := range ids {
+			result += processLine(ids[id])
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		fmt.Printf("Scanner error: %v\n", err)
+		return
+	}
+	fmt.Println(result)
+}
+
+func processLine(line string) int {
+	split := strings.Split(line, "-")
+	start, _ := strconv.Atoi(split[0])
+	end, _ := strconv.Atoi(split[1])
+
+	results := 0
+	for i := start; i <= end; i++ {
+		if isValidId(strconv.Itoa(i)) {
+			results += i
+		}
+	}
+	return results
+}
+
+// func isValidId(id string) bool {
+// 	idBytes := []byte(id)
+// 	if len(idBytes)%2 != 0 {
+// 		return false // can't split evenly
+// 	}
+
+// 	mid := len(idBytes) / 2
+// 	return bytes.Equal(idBytes[:mid], idBytes[mid:])
+// }
+
+func isValidId(id string) bool {
+	idBytes := []byte(id)
+l:
+	for nSplits := 2; nSplits <= len(idBytes); nSplits++ {
+		if len(idBytes)%nSplits != 0 {
+			continue
+		}
+		split := len(idBytes) / nSplits
+		for j := 0; j < nSplits-1; j++ {
+			if !bytes.Equal(idBytes[split*j:split*(j+1)], idBytes[split*(j+1):split*(j+2)]) {
+				continue l
+			}
+		}
+		return true
+	}
+	return false
+}
