@@ -1,0 +1,61 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+	"strconv"
+	"strings"
+)
+
+type item struct {
+	mult int
+	add  int
+}
+
+func main() {
+	file, err := os.Open("input.txt")
+	if err != nil {
+		fmt.Printf("Error opening input file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+
+	ranges := []item{}
+	result := 0
+	for scanner.Scan() {
+		line := scanner.Text()
+		data := strings.Fields(line)
+		if len(ranges) < len(data) {
+			need := len(data) - len(ranges)
+			ranges = append(ranges, make([]item, need)...)
+		}
+
+		for i, d := range data {
+			switch d {
+			case "+":
+				result += ranges[i].add
+				continue
+			case "*":
+				result += ranges[i].mult
+				continue
+			}
+			j, _ := strconv.Atoi(d)
+			if ranges[i].mult == 0 && ranges[i].add == 0 {
+				ranges[i] = item{
+					mult: j,
+					add:  j,
+				}
+			} else {
+				ranges[i] = item{
+					mult: ranges[i].mult * j,
+					add:  ranges[i].add + j,
+				}
+			}
+		}
+	}
+
+	fmt.Println(result)
+}
