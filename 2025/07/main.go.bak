@@ -1,0 +1,50 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
+
+func main() {
+	file, err := os.Open("input.txt")
+	if err != nil {
+		fmt.Printf("Error opening input file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	tachions := make(map[int]bool)
+	splits := 0
+
+	scanner := bufio.NewScanner(file)
+
+	scanner.Scan()
+	firstLine := scanner.Text()
+
+	for s := range firstLine {
+		if firstLine[s] == 'S' {
+			tachions[s] = true
+			break
+		}
+	}
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		new_tachions := tachions
+		for k := range tachions {
+			if line[k] == '^' {
+				splits++
+				delete(new_tachions, k)
+				if k-1 > 0 {
+					new_tachions[k-1] = true
+				}
+				if k+1 < len(line) {
+					new_tachions[k+1] = true
+				}
+			}
+		}
+	}
+
+	fmt.Println(splits)
+}
